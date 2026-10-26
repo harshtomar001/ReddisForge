@@ -1,0 +1,9 @@
+﻿#ifndef REDISFORGE_RESP2_ENCODER_H
+#define REDISFORGE_RESP2_ENCODER_H
+
+
+class resp2_encoder {
+};
+
+
+#endif //REDISFORGE_RESP2_ENCODER_H

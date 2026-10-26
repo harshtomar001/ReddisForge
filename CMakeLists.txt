@@ -16,6 +16,10 @@ add_executable(redisforge
         src/core/storage_engine.h
         src/server/command_executor.cpp
         src/server/command_executor.h
+        src/server/resp2_encoder.cpp
+        src/server/resp2_encoder.h
+        src/server/resp2_parser.cpp
+        src/server/resp2_parser.h
 )
 
 target_compile_options(redisforge PRIVATE
@@ -35,7 +39,9 @@ add_executable(redisforge_tests
         tests/storage_engine/storage_engine_test.cpp
         src/core/storage_engine.cpp
         src/server/command_executor.cpp
+        src/server/resp2_parser.cpp
         tests/server/command_executor_test.cpp
+        tests/server/resp2_parser_test.cpp
 )
 
 target_link_libraries(redisforge_tests

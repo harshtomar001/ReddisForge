@@ -174,6 +174,7 @@ std::string CommandExecutor::execute(const std::vector<std::string>& command) {
     }
 
     if (command[0] == "FLUSHDB") {
+
         if (command.size() != 1) {
             throw std::invalid_argument("FLUSHDB expects exactly 1 argument");
         }

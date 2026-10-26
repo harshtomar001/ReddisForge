@@ -14,6 +14,8 @@ add_executable(redisforge
         src/main.cpp
         src/core/storage_engine.cpp
         src/core/storage_engine.h
+        src/server/command_executor.cpp
+        src/server/command_executor.h
 )
 
 target_compile_options(redisforge PRIVATE
@@ -30,8 +32,10 @@ find_package(GTest CONFIG REQUIRED)
 
 # Separate executable for unit tests
 add_executable(redisforge_tests
-        tests/storage_engine_test.cpp
+        tests/storage_engine/storage_engine_test.cpp
         src/core/storage_engine.cpp
+        src/server/command_executor.cpp
+        tests/server/command_executor_test.cpp
 )
 
 target_link_libraries(redisforge_tests

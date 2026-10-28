@@ -20,6 +20,7 @@ add_executable(redisforge
         src/server/resp2_encoder.h
         src/server/resp2_parser.cpp
         src/server/resp2_parser.h
+        src/server/resp2_value.h
 )
 
 target_compile_options(redisforge PRIVATE
@@ -42,6 +43,8 @@ add_executable(redisforge_tests
         src/server/resp2_parser.cpp
         tests/server/command_executor_test.cpp
         tests/server/resp2_parser_test.cpp
+        tests/server/resp2_encoder_test.cpp
+        src/server/resp2_encoder.cpp
 )
 
 target_link_libraries(redisforge_tests

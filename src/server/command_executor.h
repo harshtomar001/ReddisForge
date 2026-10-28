@@ -1,5 +1,6 @@
 ﻿#ifndef REDISFORGE_COMMAND_EXECUTOR_H
 #define REDISFORGE_COMMAND_EXECUTOR_H
+#include "resp2_value.h"
 #include "../core/storage_engine.h"
 
 
@@ -10,8 +11,7 @@ private:
 public:
     explicit CommandExecutor(StorageEngine &storage_engine);
 
-    std::string execute(const std::vector<std::string>& command);
-
+    RespValue execute(const std::vector<std::string>& command);
 
 };
 

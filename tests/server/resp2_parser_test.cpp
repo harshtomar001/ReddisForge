@@ -3,17 +3,13 @@
 #include <charconv>
 #include <stdexcept>
 #include <string>
-#include <string_view>
-#include <system_error>
-#include <utility>
 
 #include "../../src/server/resp2_parser.h"
 
 TEST(Resp2ParserTest, ParsesSimpleCommand) {
     Resp2Parser parser;
 
-    const std::string input =
-        "*1\r\n$4\r\nPING\r\n";
+    const std::string input ="*1\r\n$4\r\nPING\r\n";
 
     const std::vector<std::string> expected = {"PING"};
 
@@ -64,8 +60,7 @@ TEST(Resp2ParserTest, RejectsMissingArrayHeaderDelimiter) {
 TEST(Resp2ParserTest, RejectsInvalidBulkStringTerminator) {
     Resp2Parser parser;
 
-    const std::string input =
-        "*1\r\n$4\r\nPINGXX";
+    const std::string input ="*1\r\n$4\r\nPINGXX";
 
     EXPECT_THROW(
         parser.parse(input),

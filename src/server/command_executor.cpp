@@ -6,7 +6,7 @@ CommandExecutor::CommandExecutor(StorageEngine &storage_engine):
 storage_engine_(storage_engine) {}
 
 
-std::string CommandExecutor::execute(const std::vector<std::string>& command) {
+RespValue CommandExecutor::execute(const std::vector<std::string>& command) {
 
     if (command.empty()) {
         throw std::invalid_argument("Command cannot be empty");
@@ -17,7 +17,7 @@ std::string CommandExecutor::execute(const std::vector<std::string>& command) {
             throw std::invalid_argument("PING expects no arguments");
         }
 
-        return "PONG";
+        return RespValue{SimpleString{"PONG"}};
     }
 
     if (command[0] == "SET") {
@@ -26,7 +26,7 @@ std::string CommandExecutor::execute(const std::vector<std::string>& command) {
         }
 
         storage_engine_.set(command[1], command[2]);
-        return "OK";
+        return RespValue{SimpleString{"OK"}};
     }
 
     if (command[0] == "GET") {
@@ -37,10 +37,10 @@ std::string CommandExecutor::execute(const std::vector<std::string>& command) {
         const auto value = storage_engine_.get(command[1]);
 
         if (!value.has_value()) {
-            return "(nil)";
+            return RespValue{std::monostate{}} ;
         }
 
-        return *value;
+        return  RespValue{BulkString{*value}};
     }
 
     if (command[0] == "DEL") {
@@ -59,7 +59,7 @@ std::string CommandExecutor::execute(const std::vector<std::string>& command) {
 
         }
 
-        return std::to_string(keys_deleted);
+        return RespValue{(long long)keys_deleted};
 
     }
 
@@ -79,7 +79,7 @@ std::string CommandExecutor::execute(const std::vector<std::string>& command) {
 
         }
 
-        return std::to_string(keys_exists);
+        return RespValue{(long long)keys_exists };
 
     }
 
@@ -88,9 +88,10 @@ std::string CommandExecutor::execute(const std::vector<std::string>& command) {
             throw std::invalid_argument("INCR expects exactly 1 key");
         }
 
-        std::string key = command[1];
+         auto  key = command[1];
+        const long long result = storage_engine_.incr(key);
 
-        return std::to_string(storage_engine_.incr(key));
+        return RespValue{result};
 
     }
 
@@ -101,39 +102,39 @@ std::string CommandExecutor::execute(const std::vector<std::string>& command) {
         }
 
         std::string key = command[1];
+        const long long result = storage_engine_.decr(key);
 
-        return std::to_string(storage_engine_.decr(key));
+        return RespValue{result};
 
     }
 
     if (command[0] == "MGET") {
-
         if (command.size() < 2) {
-            throw std::invalid_argument("MGET expects atleast 1 key");
+            throw std::invalid_argument("MGET expects at least 1 key");
         }
 
-        std::vector<std::string> keys(command.begin() + 1, command.end());
+        std::vector<RespValue> results;
+        results.reserve(command.size() - 1);
 
-        auto values = storage_engine_.mget(keys);
+        for (std::size_t i = 1; i < command.size(); ++i) {
 
-        std::string result = "[";
+            auto value = storage_engine_.get(command[i]);
 
-        for (std::size_t i = 0; i < values.size(); ++i) {
-            if (i > 0) {
-                result += ", ";
+            if (value.has_value()) {
+
+                results.emplace_back(BulkString{*value});
+
             }
+            else {
 
-            if (values[i].has_value()) {
-                result += *values[i];
-            } else {
-                result += "(nil)";
+                results.emplace_back(std::monostate{});
+
             }
         }
 
-        result += "]";
-
-        return result;
-
+        return RespValue{
+            std::make_shared<std::vector<RespValue>>(std::move(results))
+        };
     }
 
     if (command[0] == "MSET") {
@@ -159,7 +160,7 @@ std::string CommandExecutor::execute(const std::vector<std::string>& command) {
 
         storage_engine_.mset(keys);
 
-        return "OK";
+        return RespValue{SimpleString{"OK"}};
 
     }
 
@@ -169,7 +170,7 @@ std::string CommandExecutor::execute(const std::vector<std::string>& command) {
             throw std::invalid_argument("DBSIZE expects exactly 1 argument");
         }
 
-        return std::to_string(storage_engine_.dbsize());
+        return RespValue{ (long long) storage_engine_.dbsize() };
 
     }
 
@@ -181,7 +182,7 @@ std::string CommandExecutor::execute(const std::vector<std::string>& command) {
 
         storage_engine_.flushdb();
 
-        return "OK";
+        return RespValue{SimpleString{"OK"}};
     }
 
 

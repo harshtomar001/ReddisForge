@@ -1,6 +1,4 @@
-﻿
-#include "resp2_encoder.h"
-
+﻿#include "resp2_encoder.h"
 #include <stdexcept>
 #include <string>
 #include <variant>

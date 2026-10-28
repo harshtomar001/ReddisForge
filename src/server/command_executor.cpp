@@ -186,7 +186,6 @@ RespValue CommandExecutor::execute(const std::vector<std::string>& command) {
     }
 
 
-
     throw std::invalid_argument("Unknown command");
 
 }

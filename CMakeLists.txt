@@ -21,6 +21,8 @@ add_executable(redisforge
         src/server/resp2_parser.cpp
         src/server/resp2_parser.h
         src/server/resp2_value.h
+        src/server/command_processor.cpp
+        src/server/command_processor.h
 )
 
 target_compile_options(redisforge PRIVATE

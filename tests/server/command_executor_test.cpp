@@ -61,24 +61,24 @@ const std::vector<RespValue>& getArray(const RespValue& result) {
 // PING
 
 TEST(CommandExecutorTest, PingReturnsPong) {
-StorageEngine storage;
-CommandExecutor executor(storage);
+    StorageEngine storage;
+    CommandExecutor executor(storage);
 
 
-EXPECT_EQ(getSimpleString(executor.execute({"PING"})), "PONG");
-
+    EXPECT_EQ(getSimpleString(executor.execute({"PING"})), "PONG");
 
 }
 
 TEST(CommandExecutorTest, PingRejectsExtraArguments) {
-StorageEngine storage;
-CommandExecutor executor(storage);
+    StorageEngine storage;
+    CommandExecutor executor(storage);
 
 
-EXPECT_THROW(executor.execute({"PING", "extra"}), std::invalid_argument);
-
+    EXPECT_THROW(executor.execute({"PING", "extra"}), std::invalid_argument);
 
 }
+
+
 
 // SET
 

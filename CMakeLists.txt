@@ -23,8 +23,14 @@ add_executable(redisforge
         src/server/resp2_value.h
         src/server/command_processor.cpp
         src/server/command_processor.h
+        src/server/tcp_server.cpp
+        src/server/tcp_server.h
+        src/server/resp2_framer.cpp
+        src/server/resp2_framer.h
 )
 
+target_compile_definitions(redisforge PRIVATE _WIN32_WINNT=0x0A00)
+target_link_libraries(redisforge PRIVATE ws2_32 mswsock)
 target_compile_options(redisforge PRIVATE
 -Wall
 -Wextra
@@ -41,12 +47,16 @@ find_package(GTest CONFIG REQUIRED)
 add_executable(redisforge_tests
         tests/storage_engine/storage_engine_test.cpp
         src/core/storage_engine.cpp
+
         src/server/command_executor.cpp
         src/server/resp2_parser.cpp
+        src/server/resp2_encoder.cpp
+        src/server/command_processor.cpp
+
         tests/server/command_executor_test.cpp
         tests/server/resp2_parser_test.cpp
         tests/server/resp2_encoder_test.cpp
-        src/server/resp2_encoder.cpp
+        tests/server/command_processor_test.cpp
 )
 
 target_link_libraries(redisforge_tests
@@ -54,10 +64,14 @@ PRIVATE
 GTest::gtest_main
 )
 
+target_compile_definitions(redisforge_tests PRIVATE _WIN32_WINNT=0x0A00)
+target_link_libraries(redisforge_tests PRIVATE ws2_32)
+
 target_compile_options(redisforge_tests PRIVATE
 -Wall
 -Wextra
 -Wpedantic
+
 )
 
 include(GoogleTest)

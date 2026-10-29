@@ -1,5 +1,5 @@
 ﻿#include "command_processor.h"
-
+#include  <exception>
 
 CommandProcessor::CommandProcessor(
     Resp2Encoder& resp2_encoder,
@@ -11,15 +11,17 @@ CommandProcessor::CommandProcessor(
     command_executor(command_executor) {}
 
 std::string CommandProcessor::execute(const std::string& inputString) {
+    RespValue result;
 
-    std::vector<std::string> inputCommand = resp2_parser.parse(inputString);
+    try {
+        std::vector<std::string> inputCommand =
+            resp2_parser.parse(inputString);
 
+        result = command_executor.execute(inputCommand);
 
-
-    RespValue result = command_executor.execute(inputCommand);
-
-    return resp2_encoder.encode(result);
-
-
+    } catch (const std::exception& error) {
+        result = RespValue{RespError{error.what()}};
     }
 
+    return resp2_encoder.encode(result);
+}

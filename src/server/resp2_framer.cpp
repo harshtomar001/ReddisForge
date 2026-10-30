@@ -1,5 +1,10 @@
-﻿//
-// Created by harsh on 29-10-2026.
-//
+﻿#include "resp2_framer.h"
+#include <charconv>
+#include <system_error>
 
-#include "resp2_framer.h"
+
+
+FrameResult Resp2Framer::find_frame(std::string_view input) const {
+
+
+}

@@ -52,11 +52,13 @@ add_executable(redisforge_tests
         src/server/resp2_parser.cpp
         src/server/resp2_encoder.cpp
         src/server/command_processor.cpp
+        src/server/resp2_framer.cpp
 
         tests/server/command_executor_test.cpp
         tests/server/resp2_parser_test.cpp
         tests/server/resp2_encoder_test.cpp
         tests/server/command_processor_test.cpp
+        tests/server/resp2_framer_test.cpp
 )
 
 target_link_libraries(redisforge_tests

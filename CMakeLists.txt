@@ -27,6 +27,8 @@ add_executable(redisforge
         src/server/tcp_server.h
         src/server/resp2_framer.cpp
         src/server/resp2_framer.h
+        src/server/client_session.cpp
+        src/server/client_session.h
 )
 
 target_compile_definitions(redisforge PRIVATE _WIN32_WINNT=0x0A00)

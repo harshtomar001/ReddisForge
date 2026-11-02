@@ -2,6 +2,8 @@
 #include <iostream>
 #include <stdexcept>
 
+#include "client_session.h"
+
 TcpServer::TcpServer(
     asio::io_context& io_context, // The object Asio uses to manage and execute asynchronous I/O operations.
     unsigned short port, // The TCP port on which the server should listen, such as 6379.
@@ -63,60 +65,68 @@ void TcpServer::start_accept() {
 // std::make_shared() — creates an object managed by a shared-ownership smart pointer.
 // Passing std::move(socket) to a function — transfers ownership of the socket into that function.
 
+
 void TcpServer::handle_client(asio::ip::tcp::socket socket) {
 
-    auto client =std::make_shared<asio::ip::tcp::socket>(
-        std::move(socket)
+
+    auto session = std::make_shared<ClientSession>(
+        std::move(socket) ,
+        command_processor_
         );
-    //Creates a socket object managed by a shared_ptr.
-    //Allows the newly created socket object to be constructed by moving resources from the existing socket.
 
-    // A connected socket arrives as the function parameter.
-    // make_shared allocates storage for a new socket object.
-    // The new socket is move-constructed from the existing socket.
-    // client now owns a shared_ptr to that socket object.
-    // The original function parameter is destroyed when appropriate, but the connection's ownership has already transferred.
+    session->start();
 
-    auto buffer = std::make_shared<std::array<char, 1024>>();
 
-    //Here, *buffer dereferences the shared pointer to access the actual array.
-    // Asio then uses that array as the destination for incoming bytes.
 
-    client->async_read_some(
-        asio::buffer(*buffer),
-        [client, buffer](const asio::error_code& error,
-                         std::size_t bytes_received) {
-            if (error) {
-                if (error != asio::error::eof) {
-                    std::cerr << "Read failed: "
-                              << error.message()
-                              << '\n';
-                }
-                return;
-            }
-
-            std::cout << "Received " << bytes_received
-                      << " bytes from client.\n";
-
-            const std::string response = "+PONG\r\n";
-
-            asio::async_write(
-                *client,
-                asio::buffer(response),
-                [client, response](
-                    const asio::error_code& write_error,
-                    std::size_t /*bytes_sent*/) {
-
-                    if (write_error) {
-                        std::cerr << "Write failed: "
-                                  << write_error.message()
-                                  << '\n';
-                    }
-
-                }
-            );
-        }
-    );
+    // //Creates a socket object managed by a shared_ptr.
+    // //Allows the newly created socket object to be constructed by moving resources from the existing socket.
+    //
+    // // A connected socket arrives as the function parameter.
+    // // make_shared allocates storage for a new socket object.
+    // // The new socket is move-constructed from the existing socket.
+    // // client now owns a shared_ptr to that socket object.
+    // // The original function parameter is destroyed when appropriate, but the connection's ownership has already transferred.
+    //
+    // auto buffer = std::make_shared<std::array<char, 1024>>();
+    //
+    // //Here, *buffer dereferences the shared pointer to access the actual array.
+    // // Asio then uses that array as the destination for incoming bytes.
+    //
+    // client->async_read_some(
+    //     asio::buffer(*buffer),
+    //     [client, buffer](const asio::error_code& error,
+    //                      std::size_t bytes_received) {
+    //         if (error) {
+    //             if (error != asio::error::eof) {
+    //                 std::cerr << "Read failed: "
+    //                           << error.message()
+    //                           << '\n';
+    //             }
+    //             return;
+    //         }
+    //
+    //         std::cout << "Received " << bytes_received
+    //                   << " bytes from client.\n";
+    //
+    //         const std::string response = "+PONG\r\n";
+    //
+    //         asio::async_write(
+    //             *client,
+    //             asio::buffer(response),
+    //             [client, response](
+    //                 const asio::error_code& write_error,
+    //                 std::size_t /*bytes_sent*/) {
+    //
+    //                 if (write_error) {
+    //                     std::cerr << "Write failed: "
+    //                               << write_error.message()
+    //                               << '\n';
+    //                 }
+    //
+    //             }
+    //         );
+    //     }
+    // );
 }
 
 //async_accept callback

@@ -1,5 +1,4 @@
 ﻿#include "resp2_framer.h"
-
 #include <algorithm>
 #include <charconv>
 #include <vector>
@@ -49,7 +48,6 @@ FrameResult Resp2Framer::find_frame(std::string_view input) const {
         return FrameResult{ FrameStatus::Malformed , 0};
 
     }
-
 
     std::size_t pos = arrayHeaderEnd + 2;
 

@@ -1,5 +1,6 @@
 ﻿#include "client_session.h"
-
+#include <iostream>
+using namespace std;
 
 ClientSession::ClientSession(asio::ip::tcp::socket socket,
     CommandProcessor &command_processor
@@ -14,6 +15,8 @@ void ClientSession::start() {
 }
 
 void ClientSession::read() {
+
+    std::cout <<"calling read" << '\n';
 
     if (closed_) return;
 
@@ -33,9 +36,18 @@ void ClientSession::read() {
 
             self->input_buffer_.append(self->read_buffer_.data() , bytes_transferred);
 
+            std::cout << "Received bytes: " << bytes_transferred << '\n';
+
+            for (unsigned char c : self-> input_buffer_) {
+
+                std::cout << static_cast<int>(c) << ' ';
+
+            }
+
             self->process_input();
 
-            if (self->closed_) return;
+            if (self-> closed_) return;
+
             self-> read();
 
     });
@@ -47,24 +59,38 @@ void ClientSession::process_input() {
 
         FrameResult frameOutput =  framer_.find_frame(input_buffer_);
 
+        std::cout << "Raw request: [" << input_buffer_ << "]\n";
 
-        if (frameOutput.status == FrameStatus::Incomplete) return;
+        std::cout << "Frame status: " << static_cast<int>(frameOutput.status) << '\n';
+
+        if (frameOutput.status == FrameStatus::Incomplete) {
+
+            std::cout << "Inside the Incomplete block" <<  endl;
+
+        }
 
         if (frameOutput.status == FrameStatus::Malformed) {
 
-            close();
+            std::cout << "Inside the Malformed block" <<  endl;
 
+            close();
             return;
 
         }
 
         if (frameOutput.status == FrameStatus::Complete) {
 
+            std::cout << "Complete" << '\n';
+
             std::string  request = input_buffer_.substr(0 , frameOutput.frame_size );
 
-            input_buffer_.erase(0 , frameOutput.frame_size); 
+            input_buffer_.erase(0 , frameOutput.frame_size);
+
+            std::cout << "Input request"<<'\n';
 
             std::string response = command_processor_.execute(request);
+
+            std::cout << "Response: " << response << endl;
 
             write(response); //  writing the output
 

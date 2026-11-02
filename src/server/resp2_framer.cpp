@@ -3,6 +3,7 @@
 #include <charconv>
 #include <vector>
 #include <system_error>
+#include <iostream>
 using namespace std;
 
 
@@ -12,6 +13,8 @@ FrameResult Resp2Framer::find_frame(std::string_view input) const {
     if (input.empty()) {
         return FrameResult{ FrameStatus::Incomplete , 0 };
     }
+
+    std::cout << "Input size: " << input.size() << '\n';
 
     std::size_t arrayHeaderEnd = input.find("\r\n");
 

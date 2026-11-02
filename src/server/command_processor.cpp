@@ -1,5 +1,7 @@
 ﻿#include "command_processor.h"
 #include  <exception>
+#include <iostream>
+using namespace std;
 
 CommandProcessor::CommandProcessor(
     Resp2Encoder& resp2_encoder,
@@ -18,6 +20,7 @@ std::string CommandProcessor::execute(const std::string& inputString) {
             resp2_parser.parse(inputString);
 
         result = command_executor.execute(inputCommand);
+
 
     } catch (const std::exception& error) {
         result = RespValue{RespError{error.what()}};
